@@ -20,7 +20,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @HttpCode(HttpStatus.CREATED)
-  @Post('/create')
+  @Post('/register')
   async create(@Body() body: CreateUserDto) {
     return this.usersService.create(body);
   }

@@ -8,6 +8,10 @@ export class UpdateUserDto {
 
     @IsOptional()
     @IsString()
+    lastname: string
+
+    @IsOptional()
+    @IsString()
     userage: number
 
     @IsOptional()
@@ -18,4 +22,7 @@ export class UpdateUserDto {
     @IsString()
     location: string
 
+    @IsOptional()
+    @IsOptional()
+    password: string
 }

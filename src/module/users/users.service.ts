@@ -4,18 +4,24 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersEntity } from '../../entities/users.entity';
+// import { PhoneHelper } from "../../utils/utils.phone";
 
 @Injectable()
 export class UsersService {
   async create(badyDto: CreateUserDto): Promise<void> {
+
+    // const phoneNumber = PhoneHelper
     await UsersEntity.createQueryBuilder()
       .insert()
       .into(UsersEntity)
       .values({
         username: badyDto.username,
-        userage: badyDto.userage,
+        lastname: badyDto.lastname,
+        userage: badyDto.userage ?? 18,
         phone: badyDto.phone,
-        location: badyDto.location
+        location: badyDto.location ?? "Toshkent",
+        password: badyDto.password,
+        role: badyDto.role ?? "user"
 
       })
       .execute()
@@ -26,11 +32,7 @@ export class UsersService {
   }
 
   async findAll() {
-    return await UsersEntity.find({
-      relations: {
-        // 
-      }
-    })
+    return await UsersEntity.find()
       .catch(() => {
         throw new HttpException('User not fount', HttpStatus.NOT_FOUND)
       })
@@ -44,9 +46,13 @@ export class UsersService {
         userId: id
       }
     })
+      .catch(() => {
+        throw new HttpException("User not fount", HttpStatus.NOT_FOUND)
+      })
   }
 
   async updateUser(id: string, updateDto: UpdateUserDto) {
+
     const user = await UsersEntity.findOne({
       where: {
         userId: id
@@ -60,9 +66,11 @@ export class UsersService {
       .update(UsersEntity)
       .set({
         username: updateDto.username ? updateDto.username : user.username,
+        lastname: updateDto.lastname ? updateDto.lastname : user.lastname,
         userage: updateDto.userage ? updateDto.userage : user.userage,
         phone: updateDto.phone ? updateDto.phone : user.phone,
-        location: updateDto.location ? updateDto.location : user.location
+        location: updateDto.location ? updateDto.location : user.location,
+        password: updateDto.password ? updateDto.password : user.password
       })
       .where({
         userId: id

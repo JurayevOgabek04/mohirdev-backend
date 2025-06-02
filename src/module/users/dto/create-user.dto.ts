@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsNotEmpty } from "class-validator";
+import { IsString, IsNumber, IsNotEmpty, IsPhoneNumber, IsOptional } from "class-validator";
 
 
 export class CreateUserDto {
@@ -6,15 +6,31 @@ export class CreateUserDto {
     @IsNotEmpty()
     username: string
 
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
+    lastname: string
+
+    @IsNumber()
+    @IsOptional()
     userage: number
 
+
     @IsString()
-    @IsNotEmpty()
-    phone: string
+    @IsOptional()
+    location: string
+
+    @IsString()
+    @IsOptional()
+    role: string = 'user'
 
     @IsString()
     @IsNotEmpty()
-    location: string
+        // @IsPhoneNumber("UZ", { "message": "Telefon raqami noto'g'ri kiritilgan" })
+    phone: string
+
+
+    @IsString()
+    @IsNotEmpty()
+    password: string
+
 }
