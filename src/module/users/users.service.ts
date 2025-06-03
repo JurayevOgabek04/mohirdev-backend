@@ -1,17 +1,31 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 
-
-import { CreateUserDto } from './dto/create-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
+import { LoginUserDto } from "./dto/login-user.dto"
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersEntity } from '../../entities/users.entity';
-// import { PhoneHelper } from "../../utils/utils.phone";
+import JwtStrategy from '../../utils/utils'
+
 
 @Injectable()
 export class UsersService {
-  async create(badyDto: CreateUserDto): Promise<void> {
 
-    // const phoneNumber = PhoneHelper
-    await UsersEntity.createQueryBuilder()
+  //Users Register
+
+  async register(badyDto: RegisterUserDto): Promise<any> {
+
+    const findUser = await UsersEntity.findOne({
+      where: {
+        phone: badyDto.phone
+      }
+    })
+
+    if (findUser) {
+      return "User already exists"
+    }
+
+
+    const newUser = await UsersEntity.createQueryBuilder()
       .insert()
       .into(UsersEntity)
       .values({
@@ -29,7 +43,40 @@ export class UsersService {
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST)
       })
 
+    const token = JwtStrategy.sign({ email: newUser.raw[0]?.phone })
+
+    return {
+      code: 200,
+      access_token: token
+    }
+
+
   }
+
+  async login(badyDto: LoginUserDto): Promise<any> {
+    const user = await UsersEntity.findOne({
+      where: {
+        phone: badyDto.phone
+      }
+    })
+
+    if (!user) {
+      return "User not Found"
+    } else {
+      if (user.password != badyDto.password) {
+        return "Password is not correct"
+      }
+    }
+
+    const token = await JwtStrategy.sign({ phone: user.phone })
+
+    return {
+      status: 200,
+      access_token: token
+    }
+  }
+
+  //Users all
 
   async findAll() {
     return await UsersEntity.find()
@@ -40,16 +87,43 @@ export class UsersService {
 
   }
 
+
+  //users one 
+
   async findOne(id: string) {
-    return await UsersEntity.findOne({
+    const user = await UsersEntity.findOne({
       where: {
         userId: id
       }
     })
-      .catch(() => {
-        throw new HttpException("User not fount", HttpStatus.NOT_FOUND)
-      })
+
+    if (!user) {
+      throw new HttpException('User not fount', HttpStatus.NOT_FOUND)
+    }
+
+    return user
   }
+
+
+  //users one phone number
+
+  async findOnePhone(number: string) {
+    const user = await UsersEntity.findOne({
+      where: {
+        phone: number
+      }
+    })
+
+    if (!user) {
+      throw new HttpException('User not fount', HttpStatus.NOT_FOUND)
+    }
+
+    return user
+
+  }
+
+
+  //Users Update
 
   async updateUser(id: string, updateDto: UpdateUserDto) {
 
@@ -80,6 +154,9 @@ export class UsersService {
         throw new HttpException("BAD REQUEST", HttpStatus.BAD_REQUEST)
       })
   }
+
+
+  //User Delete
 
   async removeUser(id: string) {
     await UsersEntity

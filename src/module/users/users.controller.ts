@@ -12,18 +12,26 @@ import {
 } from '@nestjs/common';
 
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from "./dto/login-user.dto"
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
+
   @HttpCode(HttpStatus.CREATED)
   @Post('/register')
-  async create(@Body() body: CreateUserDto) {
-    return this.usersService.create(body);
+  async register(@Body() body: RegisterUserDto) {
+    return this.usersService.register(body);
   }
+
+  @Post('/login')
+  async login(@Body() body: LoginUserDto) {
+    return this.usersService.login(body)
+  }
+
 
   @HttpCode(HttpStatus.OK)
   @Get('/all')
@@ -35,6 +43,12 @@ export class UsersController {
   @Get('/one/:id')
   findOne(@Param('id', new ParseUUIDPipe({ version: "4" })) id: string) {
     return this.usersService.findOne(id);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/phone/:number')
+  findOnePhone(@Param('number') number: string) {
+    return this.usersService.findOnePhone(number);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
