@@ -22,6 +22,7 @@ export class UsersEntity extends BaseEntity {
 
     @Column({
         type: Number,
+        nullable: true
     })
     userage: number
 
@@ -32,8 +33,9 @@ export class UsersEntity extends BaseEntity {
 
     @Column({
         type: "character varying",
+        nullable: true
     })
-    location: string
+    location: string | null
 
     @Column({
         type: "character varying"
@@ -42,6 +44,7 @@ export class UsersEntity extends BaseEntity {
 
     @Column({
         type: 'character varying',
+        nullable: true
     })
     role: string
 }

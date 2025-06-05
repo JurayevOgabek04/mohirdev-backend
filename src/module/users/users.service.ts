@@ -31,9 +31,9 @@ export class UsersService {
       .values({
         username: badyDto.username,
         lastname: badyDto.lastname,
-        userage: badyDto.userage ?? 18,
+        userage: badyDto.userage,
         phone: badyDto.phone,
-        location: badyDto.location ?? "Toshkent",
+        location: badyDto.location,
         password: badyDto.password,
         role: badyDto.role ?? "user"
 
@@ -159,6 +159,17 @@ export class UsersService {
   //User Delete
 
   async removeUser(id: string) {
+
+    const user = await UsersEntity.findOne({
+      where: {
+        userId: id
+      }
+    })
+
+    if (!user) {
+      return "User not found"
+    }
+
     await UsersEntity
       .createQueryBuilder()
       .delete()
@@ -168,5 +179,10 @@ export class UsersService {
       .catch(() => {
         throw new HttpException("Bad REquest", HttpStatus.BAD_REQUEST)
       })
+
+    return {
+      code: 200,
+      message: "user successfully deleted"
+    }
   }
 }
