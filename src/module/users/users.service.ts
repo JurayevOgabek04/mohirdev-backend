@@ -4,7 +4,8 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginUserDto } from "./dto/login-user.dto"
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersEntity } from '../../entities/users.entity';
-import JwtStrategy from '../../utils/utils'
+import JwtStrategy from '../../utils/utils';
+
 
 
 @Injectable()

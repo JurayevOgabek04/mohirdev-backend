@@ -1,6 +1,8 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import * as dotenv from "dotenv"
 import { UsersEntity } from "../../entities/users.entity"
+import { CatigoryEntity } from "../../entities/catigories.entity"
+import { SubCatigoriesEntity } from "../../entities/subcatigories.entity"
 
 
 dotenv.config()
@@ -15,6 +17,8 @@ export const connectDb: TypeOrmModuleOptions = {
     database: process.env.DATABASE,
     entities: [
         UsersEntity,
+        CatigoryEntity,
+        SubCatigoriesEntity
     ],
     autoLoadEntities: true,
     synchronize: true,
