@@ -1,15 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
+import { CatigoryEntity } from "../../entities/catigories.entity"
+
+
 @Injectable()
 export class CategoriesService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  async create(bodyDto: CreateCategoryDto): Promise<any> {
+
+    const newCatigory = await CatigoryEntity.createQueryBuilder()
+      .insert()
+      .into(CatigoryEntity)
+      .values({
+        catigoryName: bodyDto.catigoryName
+      })
+      .execute()
+      .catch(() => {
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST)
+      })
+
+
+    return {
+      code: 200,
+      message: "Catigory seccussfully created"
+    }
+
   }
 
-  findAll() {
-    return `This action returns all categories`;
+
+
+  async findAll() {
+    return await CatigoryEntity.find({
+      relations: {
+        'subCatigories': true
+      }
+    })
+      .catch(() => {
+        throw new HttpException('Catigory not found', HttpStatus.NOT_FOUND)
+      })
   }
 
   findOne(id: number) {

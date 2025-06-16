@@ -7,12 +7,13 @@ export class CatigoryEntity extends BaseEntity {
     catigoryId: string
 
     @Column({
-        type: "character varying"
+        type: "character varying",
+        unique: true
     })
     catigoryName: string
 
-    @OneToMany(() => SubCatigoriesEntity, (cat) => cat.catigories, {
-        onDelete: "CASCADE"
+    @OneToMany(() => SubCatigoriesEntity, (cat) => cat.category, {
+        "cascade": true
     })
     subCatigories: SubCatigoriesEntity[]
 }

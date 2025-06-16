@@ -1,15 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, HttpException, Injectable } from '@nestjs/common';
 import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
+import { SubCatigoriesEntity } from "../../entities/subcatigories.entity"
+import { CatigoryEntity } from "../../entities/catigories.entity"
 
 @Injectable()
 export class SubcategoriesService {
-  create(badyDto: CreateSubcategoryDto) {
-    return 'This action adds a new subcategory';
+  async create(badyDto: CreateSubcategoryDto) {
+
+    const oneCatigory = await CatigoryEntity.findOneBy({
+      catigoryId: badyDto.catigoryId
+    })
+
+    const newSubCat = await SubCatigoriesEntity.createQueryBuilder()
+      .insert()
+      .into(SubCatigoriesEntity)
+      .values({
+        subCatName: badyDto.subCatigoryName,
+        category: oneCatigory
+      })
+      .execute()
+      .catch(() => {
+        throw new HttpException("Http bed request", HttpStatus.BAD_REQUEST)
+      })
+
+    return ({
+      code: 200,
+      message: "SubCaatigory seccessfully created"
+    })
   }
 
-  findAll() {
-    return `This action returns all subcategories`;
+  async findAll() {
+    return await SubCatigoriesEntity.find()
+      .catch(() => {
+        throw new HttpException("Not fount", HttpStatus.NOT_FOUND)
+      })
   }
 
   findOne(id: number) {

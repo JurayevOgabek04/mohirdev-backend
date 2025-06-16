@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm"
+import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinTable } from "typeorm"
 import { CatigoryEntity } from "./catigories.entity"
 
 @Entity({ name: "subcatigories" })
@@ -15,5 +15,6 @@ export class SubCatigoriesEntity extends BaseEntity {
     @ManyToOne(()=> CatigoryEntity, (subcat) => subcat.subCatigories, {
         onDelete: "CASCADE"
     })
-    catigories: CatigoryEntity
+    @JoinTable()
+    category: CatigoryEntity
 }
