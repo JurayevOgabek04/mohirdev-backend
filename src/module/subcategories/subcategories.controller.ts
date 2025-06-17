@@ -13,12 +13,14 @@ export class SubcategoriesController {
     return this.subcategoriesService.create(bodyDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get('/all')
   findAll() {
     return this.subcategoriesService.findAll();
   }
 
-  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  @Get('/one/:id')
   findOne(@Param('id') id: string) {
     return this.subcategoriesService.findOne(+id);
   }

@@ -7,6 +7,8 @@ import { CatigoryEntity } from "../../entities/catigories.entity"
 
 @Injectable()
 export class CategoriesService {
+
+  // Started create
   async create(bodyDto: CreateCategoryDto): Promise<any> {
 
     const newCatigory = await CatigoryEntity.createQueryBuilder()
@@ -29,6 +31,8 @@ export class CategoriesService {
   }
 
 
+  // Finished create
+  // Started find get
 
   async findAll() {
     return await CatigoryEntity.find({
@@ -41,13 +45,58 @@ export class CategoriesService {
       })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: string) {
+    const catigory = await CatigoryEntity.findOne({
+      where: {
+        catigoryId: id
+      }
+    })
+      .catch(() => {
+        throw new HttpException("BAD REQUEST", HttpStatus.BAD_REQUEST)
+      })
+
+    if (!catigory) {
+      throw new HttpException("Category Not Found", HttpStatus.NOT_FOUND)
+    }
+
+    return catigory
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+
+  // Finished Get
+  // Started Update
+  async updateCatigory(id: string, updateDto: UpdateCategoryDto) {
+    const catigory = await CatigoryEntity.findOne({
+      where: {
+        catigoryId: id
+      }
+    })
+      .catch(() => {
+        throw new HttpException("Catigory Not Found", HttpStatus.NOT_FOUND)
+      })
+
+    await CatigoryEntity.createQueryBuilder()
+      .update(CatigoryEntity)
+      .set({
+        catigoryName: updateDto.catigoryName
+      })
+      .where({
+        catigoryId: id
+      })
+      .execute()
+      .catch(() => {
+        throw new HttpException("Bad REQUEST", HttpStatus.BAD_REQUEST)
+      })
+
+    return {
+      code: 200,
+      message: "Successfully Updated"
+    }
+
   }
+
+  // Finished Update
+  // Started Delete
 
   remove(id: number) {
     return `This action removes a #${id} category`;

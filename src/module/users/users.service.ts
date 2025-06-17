@@ -154,6 +154,12 @@ export class UsersService {
       .catch(() => {
         throw new HttpException("BAD REQUEST", HttpStatus.BAD_REQUEST)
       })
+
+    return {
+      code: 200,
+      message: "Successfully Updated"
+    }
+
   }
 
 
